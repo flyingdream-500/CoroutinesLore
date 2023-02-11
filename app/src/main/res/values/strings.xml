@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">CoroutinesProject</string>
+    <string name="launch_title">Launch</string>
+    <string name="cancel_title">Cancel</string>
 </resources>

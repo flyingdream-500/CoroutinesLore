@@ -5,9 +5,13 @@ import kotlinx.coroutines.*
 import ru.sesh.coroutinesproject.utils.TAG
 import ru.sesh.coroutinesproject.utils.coroutineContextParsing
 import ru.sesh.coroutinesproject.utils.logging
+import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
+import kotlin.concurrent.thread
 import kotlin.coroutines.AbstractCoroutineContextElement
 import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 /**
  * - Корутина - это не какой-то конкретный объект. Это набор объектов,
@@ -257,4 +261,108 @@ object CoroutineContextExt {
             }
         }
     }
+}
+
+
+/**
+ * - Почему Default не подходит для IO операций?
+ * IO операции не требуют больших затрат CPU.
+ * Мы можем запустить их хоть 10 или 100 одновременно, чтобы они суммарно выполнились быстрее.
+ * И при этом мы не особо нагрузим процессор, потому что основное время там тратится на ожидание
+ * и работу с дискоим или сетью.
+ * Если мы будем запускать такие операции в Default диспетчере, то мы тем самым
+ * ограничим количество одновременно выполняемых операций
+ * - Почему IO не подходит для тяжелых вычислительных операций?
+ * Вычислительные операции требуют больших затрат CPU. Если мы паралельно запустим много таких операций,
+ * то CPU будет перегружен и не сможет выполнять другие задачи
+ * - Suspend функция может сменить поток вашей корутины(при использовании пула потоков)
+ */
+object DispatcherExt {
+
+    /**
+     * - Если корутина не находит в своем контексте диспетчер, то она использует диспетчер по умолчанию.
+     * Этот диспетчер представляет собой пул потоков. Количество потоков равно количеству ядер процессора.
+     * Он не подходит для IO операций, но сгодится для интенсивных вычислений
+     * - Одновременно запускаются 4 корутины(4-х ядерный процессор), остальные ждут освобождения потоков
+     */
+    fun launchDefaultDispatcher() {
+        val scope = CoroutineScope(Dispatchers.Default)
+        repeat(10) {
+            scope.launch {
+                logging("coroutine #$it, start")
+                delay(100)
+                logging("coroutine #$it, end")
+            }
+        }
+    }
+
+    /**
+     * Использует тот же пул потоков, что и диспетчер по умолчанию.
+     * Но его лимит на потоки равен 64 (или числу ядер процессора, если их больше 64).
+     * Этот диспетчер подходит для выполнения IO операций (запросы в сеть, чтение с диска и т.п.)
+     */
+    fun launchIoDispatcher() {
+        val scope = CoroutineScope(Dispatchers.IO)
+        repeat(10) {
+            scope.launch {
+                logging("coroutine #$it, start")
+                delay(100)
+                logging("coroutine #$it, end")
+            }
+        }
+    }
+
+    /**
+     * Dispatcher можно создать из Executor-a
+     */
+    fun launchCustomDispatcher() {
+        val scope = CoroutineScope(Executors.newSingleThreadExecutor().asCoroutineDispatcher())
+        repeat(10) {
+            scope.launch {
+                logging("coroutine #$it, start")
+                delay(100)
+                logging("coroutine #$it, end")
+            }
+        }
+    }
+
+    private suspend fun getData(): String =
+        suspendCoroutine {
+            thread {
+                TimeUnit.MILLISECONDS.sleep(3000)
+                it.resume("Data")
+            }
+        }
+
+    /**
+     * Код внутри launch выполнится в Main потоке. Когда мы вызываем метод getData, поток не будет заблокирован.
+     * Но и код не пойдет дальше, пока данные не будут получены.
+     * Suspend функция приостанавливает выполнение кода, не блокируя поток.
+     * Когда она сделает свою работу, выполнение кода возобновится
+     */
+    fun launchMainDispatcher() {
+        val scope = CoroutineScope(Dispatchers.Main)
+        scope.launch {
+            logging("coroutine start")
+            val data = getData()
+            logging("coroutine end with $data")
+        }
+    }
+
+    /**
+     * При старте корутина выполняется в том потоке, где был вызван билдер,
+     * который эту корутину создал и запустил.
+     * А при возобновлении выполнения из suspend функции, корутина выполняется в потоке,
+     * который использовался в suspend функции для выполнения фоновой работы
+     * То есть после suspend функции корутина продолжит выполняться в одиночном треде из метода [getData]
+     */
+    fun launchUnconfinedDispatcher() {
+        val scope = CoroutineScope(Dispatchers.Unconfined)
+        scope.launch {
+            logging("coroutine start")
+            val data = getData()
+            logging("coroutine end with $data")
+        }
+    }
+
 }

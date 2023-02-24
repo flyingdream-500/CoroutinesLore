@@ -28,6 +28,25 @@ object CoroutineExceptionsExt {
     val supervisorScope = CoroutineScope(SupervisorJob() + Dispatchers.Default + handler)
 
     /**
+     * launch запускает async корутину и методом await подписывается на ожидание результата.
+     * Когда в async произойдет исключение, оно будет поймано и отправлено в родительский launch и далее вверх.
+     * Т.е. родительский launch будет отменен. А метод await вместо результата выбросит то самое исключение,
+     * которое произошло в async
+     */
+    fun exceptionWithAsync(scope: CoroutineScope) {
+        scope.launch(handler) {
+            val deferred = async {
+                exceptionFunction()
+            }
+            logging("before await")
+            // Исключение сработает при вызове функции await()
+            // Если обернуть в блок try/catch, то корутина продолжит выполняться
+            val result = deferred.await()
+            logging("after await")
+        }
+    }
+
+    /**
      * Обработка ошибки в корутине при помощи CoroutineExceptionHandler
      */
     fun catchWithExceptionHandler(scope: CoroutineScope) {

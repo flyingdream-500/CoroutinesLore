@@ -3,10 +3,7 @@ package ru.sesh.coroutinesproject.continuation
 import android.content.Context
 import android.widget.Toast
 import androidx.annotation.WorkerThread
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import ru.sesh.coroutinesproject.utils.AsyncWork.AsyncWorkListener
 import ru.sesh.coroutinesproject.utils.AsyncWork.asyncWork
 import kotlin.coroutines.resume
@@ -51,8 +48,24 @@ object ContinuationExt {
         }
     }
 
-    private fun continuationStartFun(context: Context) {
-        GlobalScope.launch {
+    /**
+     *
+     *
+     * Чтобы прервать работу suspend функции в случае отмены вызвавшей ее корутины,
+     * нам доступен специальный колбэк invokeOnCancellation
+     * Он будет вызван сразу, как только корутина будет отменена.
+     * И в нем мы сможем попытаться отменить уже запущенную асинхронную работу
+     */
+    private suspend fun callCancelableSuspendFunction(): String? {
+        return suspendCancellableCoroutine { continuation ->
+            continuation.invokeOnCancellation {
+
+            }
+        }
+    }
+
+    private fun continuationStartFun(context: Context, scope: CoroutineScope) {
+        scope.launch {
             val result = callMe()
             withContext(Dispatchers.Main) {
                 result?.let {

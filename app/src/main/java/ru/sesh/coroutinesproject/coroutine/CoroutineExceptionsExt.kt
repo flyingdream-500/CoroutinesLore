@@ -28,6 +28,109 @@ object CoroutineExceptionsExt {
     val supervisorScope = CoroutineScope(SupervisorJob() + Dispatchers.Default + handler)
 
     /**
+     * * CoroutineScope - это suspend функция, внутри которой запускается специальная корутина ScopeCoroutine.
+     * Код, который мы пишем в блоке coroutineScope, становится кодом этой корутины и выполняется именно в ней
+     * * Основная особенность ScopeCoroutine в том, что она не передает ошибку родителю.
+     * Т.е. если в корутине 1_2 произойдет ошибка, то она пойдет в ScopeCoroutine, которая отменит себя и своих детей (т.е. корутину 1_1),
+     * но своему родителю (корутине 1) она ошибку передавать не будет
+     *
+     * * Ошибка из корутины 1_2 не пропадает просто так. ScopeCoroutine, хоть и не передаст ее своему родителю, но она передаст ее в свою обертку - suspend функцию coroutineScope.
+     * И suspend функция выбросит эту ошибку в наш код в месте своего вызова. И если не поймать ее там, то мы получим стандартное поведение при ошибке в корутине 1
+     *
+     * * Код coroutineScope выполняется в том же потоке, что и вызвавшая его корутина.
+     * А вот продолжить вызвавшую корутину он может в другом потоке (но в том же диспетчере)
+     */
+    fun coroutineScopeException(scope: CoroutineScope) {
+        scope.launch(CoroutineName("1")) {
+
+            coroutineScope {
+                launch(CoroutineName("1_1")) {
+                    logging("coroutine: 1_1")
+                }
+
+                launch(CoroutineName("1_2")) {
+                    logging("coroutine: 1_2")
+                    exceptionFunction()
+                }
+            }
+
+            launch(CoroutineName("1_3")) {
+                logging("coroutine: 1_3")
+            }
+
+            launch(CoroutineName("1_4")) {
+                logging("coroutine: 1_4")
+            }
+
+        }
+    }
+
+    /**
+     * * Для обработки ошибки корутин 1_1 и 1_2 необходимо обернуть coroutineScope в try/catch
+     */
+    fun safeCoroutineScopeException(scope: CoroutineScope) {
+        scope.launch(CoroutineName("1")) {
+            try {
+                coroutineScope {
+                    launch(CoroutineName("1_1")) {
+                        logging("coroutine: 1_1")
+                    }
+
+                    launch(CoroutineName("1_2")) {
+                        logging("coroutine: 1_2")
+                        exceptionFunction()
+                    }
+                }
+            } catch (e: Exception) {
+                logging("exception in coroutineScope^ $e")
+            }
+
+
+            launch(CoroutineName("1_3")) {
+                logging("coroutine: 1_3")
+            }
+
+            launch(CoroutineName("1_4")) {
+                logging("coroutine: 1_4")
+            }
+
+        }
+    }
+
+    /**
+     * * Если coroutineScope принимает ошибки от своих дочерних корутин и просто не шлет их дальше в родительскую корутину,
+     * то supervisorScope даже не принимает ошибку от дочерних
+     * * Корутина 1_2, которая пытается передать ошибку наверх в ScopeCoroutine, получает отрицательный ответ и пытается обработать ошибку сама.
+     * Для этого она использует предоставленный ей CoroutineExceptionHandler. Если же его нет, то будет крэш
+     * * Поэтому имеет смысл использовать CoroutineExceptionHandler внутри supervisorScope. В этом случае ошибка попадет в этот обработчик и на этом все закончится.
+     * Функция supervisorScope не выбросит исключение и не отменит остальные корутины внутри себя, т.е. корутину 1_1
+     */
+    fun supervisorScopeException(scope: CoroutineScope) {
+        scope.launch(handler + CoroutineName("1")) {
+
+            supervisorScope {
+                launch(CoroutineName("1_1")) {
+                    logging("coroutine: 1_1")
+                }
+
+                launch(CoroutineName("1_2")) {
+                    logging("coroutine: 1_2")
+                    exceptionFunction()
+                }
+            }
+
+            launch(CoroutineName("1_3")) {
+                logging("coroutine: 1_3")
+            }
+
+            launch(CoroutineName("1_4")) {
+                logging("coroutine: 1_4")
+            }
+
+        }
+    }
+
+    /**
      * launch запускает async корутину и методом await подписывается на ожидание результата.
      * Когда в async произойдет исключение, оно будет поймано и отправлено в родительский launch и далее вверх.
      * Т.е. родительский launch будет отменен. А метод await вместо результата выбросит то самое исключение,

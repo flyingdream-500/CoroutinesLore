@@ -182,6 +182,36 @@ object ScopeExt {
         Log.d(TAG, "job = $job")
     }
 
+    /**
+     * withContext это coroutineScope с возможностью добавить/заменить элементы контекста.
+     * Чаще всего используется для смены диспетчера
+     */
+    fun withContextExt(scope: CoroutineScope) {
+        scope.launch {
+            logging("coroutines, start")
+            delay(1_000)
+            withContext(Dispatchers.Main) {
+                logging("withContext")
+            }
+            logging("coroutines, end")
+        }
+    }
+
+    /**
+     * * runBlocking запускает корутину, которая блокирует текущий поток, пока не завершит свою работу
+     * (и пока не дождется завершения дочерних корутин)
+     * * В Android разработке такая корутина нужна для написания unit тестов, чтобы удержать поток,
+     * в котором выполняется тест
+     * * runBlocking не предполагается к использованию в основном коде Android приложения
+     */
+    fun runBlockingExt() {
+        logging("before runBlocking")
+        runBlocking {
+            delay(1_000)
+        }
+        logging("after runBlocking")
+    }
+
 }
 
 object BuilderExt {

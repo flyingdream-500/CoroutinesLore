@@ -3,7 +3,9 @@ package ru.sesh.coroutinesproject.flow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import ru.sesh.coroutinesproject.utils.logging
 import ru.sesh.coroutinesproject.R.raw as Raw
@@ -26,6 +28,12 @@ import ru.sesh.coroutinesproject.R.raw as Raw
  * Он для каждого получателя будет генерировать данные заново
  */
 object FlowExt {
+
+    // Билдер asFlow() под капотом в блоке flow в цикле эмиттит значения
+    val numbersFlow = (1..5).asFlow()
+
+    // То же, что и asFlow()
+    val lettersFlow = flowOf("a", "b", "c")
 
     /**
      * * Оператор flow создает объект Flow. Результаты он будет отправлять в свой стандартный метод emit.

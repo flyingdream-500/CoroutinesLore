@@ -1,11 +1,9 @@
 package ru.sesh.coroutinesproject.flow
 
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.sesh.coroutinesproject.utils.logging
 import ru.sesh.coroutinesproject.R.raw as Raw
@@ -86,6 +84,21 @@ object FlowExt {
         scope.launch {
             val items = getNumbers()
             logging("collected item: $items")
+        }
+    }
+
+    /**
+     * Метод отмены корутины
+     * * Вызывая метод cancel() мы отменяем текущую корутину, в которой выполняется Flow
+     * * Если flow создан билдером (например asFlow), то необходимо добавлять оператор cancellable()
+     */
+    fun cancelFlow(scope: CoroutineScope) {
+        scope.launch {
+            (1..5).toList().asFlow().cancellable()
+                .collect {
+                    if (it == 3) cancel()
+                    logging("collect $it")
+                }
         }
     }
 

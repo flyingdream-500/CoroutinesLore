@@ -1,4 +1,4 @@
-package ru.sesh.coroutinesproject
+package ru.sesh.coroutinesproject.practice.activity
 
 import android.content.Intent
 import android.os.Bundle

@@ -1,8 +1,7 @@
-package ru.sesh.coroutinesproject.utils
+package ru.sesh.coroutinesproject.lore.utils
 
 import android.util.Log
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.job
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.coroutines.ContinuationInterceptor

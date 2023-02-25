@@ -1,10 +1,10 @@
-package ru.sesh.coroutinesproject.coroutine
+package ru.sesh.coroutinesproject.lore.coroutine
 
 import android.util.Log
 import kotlinx.coroutines.*
-import ru.sesh.coroutinesproject.utils.TAG
-import ru.sesh.coroutinesproject.utils.coroutineContextParsing
-import ru.sesh.coroutinesproject.utils.logging
+import ru.sesh.coroutinesproject.lore.utils.TAG
+import ru.sesh.coroutinesproject.lore.utils.coroutineContextParsing
+import ru.sesh.coroutinesproject.lore.utils.logging
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread

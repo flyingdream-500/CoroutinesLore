@@ -1,7 +1,7 @@
-package ru.sesh.coroutinesproject.coroutine
+package ru.sesh.coroutinesproject.lore.coroutine
 
 import kotlinx.coroutines.*
-import ru.sesh.coroutinesproject.utils.logging
+import ru.sesh.coroutinesproject.lore.utils.logging
 import java.lang.Exception
 import java.util.concurrent.TimeUnit
 

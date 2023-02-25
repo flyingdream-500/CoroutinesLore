@@ -1,4 +1,4 @@
-package ru.sesh.coroutinesproject.utils
+package ru.sesh.coroutinesproject.lore.utils
 
 import androidx.annotation.WorkerThread
 

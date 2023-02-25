@@ -13,11 +13,11 @@
         android:theme="@style/Theme.CoroutinesProject"
         tools:targetApi="31">
         <activity
-            android:name=".LaunchStopActivity"
+            android:name=".practice.activity.LaunchStopActivity"
             android:exported="false"
             android:label="LaunchStopActivity" />
         <activity
-            android:name=".MainActivity"
+            android:name=".practice.activity.MainActivity"
             android:exported="true"
             android:label="MainActivity">
             <intent-filter>

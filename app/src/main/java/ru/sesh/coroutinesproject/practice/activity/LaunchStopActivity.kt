@@ -1,13 +1,13 @@
-package ru.sesh.coroutinesproject
+package ru.sesh.coroutinesproject.practice.activity
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import ru.sesh.coroutinesproject.coroutine.ScopeExt
+import ru.sesh.coroutinesproject.lore.coroutine.ScopeExt
 import ru.sesh.coroutinesproject.databinding.ActivityLaunchStopBinding
-import ru.sesh.coroutinesproject.utils.logging
+import ru.sesh.coroutinesproject.lore.utils.logging
 import java.util.concurrent.TimeUnit
 
 class LaunchStopActivity : AppCompatActivity() {

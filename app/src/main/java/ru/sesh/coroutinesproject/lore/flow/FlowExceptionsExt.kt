@@ -1,4 +1,4 @@
-package ru.sesh.coroutinesproject.flow
+package ru.sesh.coroutinesproject.lore.flow
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.launch
-import ru.sesh.coroutinesproject.utils.logging
+import ru.sesh.coroutinesproject.lore.utils.logging
 
 /**
  * * Если в Flow возникает ошибка, то мы получим ее там где происходит вызов метода collect()

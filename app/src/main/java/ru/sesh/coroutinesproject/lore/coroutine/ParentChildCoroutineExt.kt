@@ -1,11 +1,11 @@
-package ru.sesh.coroutinesproject.coroutine
+package ru.sesh.coroutinesproject.lore.coroutine
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import ru.sesh.coroutinesproject.utils.logging
+import ru.sesh.coroutinesproject.lore.utils.logging
 
 /**
  * Процесс создания и запуска дочерней корутины внутри родительской состоит из следующих этапов:

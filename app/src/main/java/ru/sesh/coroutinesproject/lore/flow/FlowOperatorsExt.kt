@@ -1,4 +1,4 @@
-package ru.sesh.coroutinesproject.flow
+package ru.sesh.coroutinesproject.lore.flow
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -7,7 +7,7 @@ import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import ru.sesh.coroutinesproject.utils.logging
+import ru.sesh.coroutinesproject.lore.utils.logging
 
 /**
  * * Основные операторы для Flow бывают двух типов: Intermediate и Terminal.

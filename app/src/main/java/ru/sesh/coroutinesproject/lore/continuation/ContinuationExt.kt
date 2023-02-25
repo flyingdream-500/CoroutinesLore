@@ -1,11 +1,11 @@
-package ru.sesh.coroutinesproject.continuation
+package ru.sesh.coroutinesproject.lore.continuation
 
 import android.content.Context
 import android.widget.Toast
 import androidx.annotation.WorkerThread
 import kotlinx.coroutines.*
-import ru.sesh.coroutinesproject.utils.AsyncWork.AsyncWorkListener
-import ru.sesh.coroutinesproject.utils.AsyncWork.asyncWork
+import ru.sesh.coroutinesproject.lore.utils.AsyncWork.AsyncWorkListener
+import ru.sesh.coroutinesproject.lore.utils.AsyncWork.asyncWork
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine

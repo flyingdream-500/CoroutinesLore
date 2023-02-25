@@ -1,4 +1,4 @@
-package ru.sesh.coroutinesproject.coroutine
+package ru.sesh.coroutinesproject.lore.coroutine
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -8,7 +8,7 @@ import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import ru.sesh.coroutinesproject.utils.logging
+import ru.sesh.coroutinesproject.lore.utils.logging
 
 /**
  * * Канал используется, как средство передачи данных между корутинами.
